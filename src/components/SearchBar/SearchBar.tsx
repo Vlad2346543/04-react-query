@@ -1,19 +1,13 @@
-import { type FormEvent } from "react";
 import toast from "react-hot-toast";
 import styles from "./SearchBar.module.css";
 
-interface Props {
+interface SearchBarProps {
   onSubmit: (query: string) => void;
 }
 
-const SearchBar = ({ onSubmit }: Props) => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const query = (form.elements.namedItem("query") as HTMLInputElement)
-      .value
-      .trim();
+const SearchBar = ({ onSubmit }: SearchBarProps) => {
+  const handleAction = async (formData: FormData) => {
+    const query = formData.get("query")?.toString().trim();
 
     if (!query) {
       toast.error("Please enter your search query.");
@@ -21,7 +15,6 @@ const SearchBar = ({ onSubmit }: Props) => {
     }
 
     onSubmit(query);
-    form.reset();
   };
 
   return (
@@ -36,7 +29,7 @@ const SearchBar = ({ onSubmit }: Props) => {
           Powered by TMDB
         </a>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} action={handleAction}>
           <input
             className={styles.input}
             type="text"
