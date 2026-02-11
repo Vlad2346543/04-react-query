@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ReactPaginate from "react-paginate";
 import toast, { Toaster } from "react-hot-toast";
@@ -29,6 +29,12 @@ const App = () => {
   const movies = data?.results ?? [];
   const totalPages = data?.total_pages ?? 0;
 
+  useEffect(() => {
+  if (!isLoading && query && movies.length === 0) {
+    toast.error("No movies found for your request.");
+  }
+}, [isLoading, movies.length, query]);
+
   const handleSearch = (value: string) => {
     setQuery(value);
     setPage(1);
@@ -41,9 +47,6 @@ const App = () => {
 
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-
-      {!isLoading && movies.length === 0 && query &&
-        toast.error("No movies found for your request.")}
 
       {!isLoading && movies.length > 0 && (
         <>
